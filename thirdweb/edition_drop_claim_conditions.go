@@ -61,18 +61,11 @@ func (claim *EditionDropClaimConditions) GetActive(ctx context.Context, tokenId 
 		return nil, err
 	}
 
-	merkle, err := claim.GetMerkleMetadata()
-	if err != nil {
-		return nil, err
-	}
-
 	provider := claim.helper.GetProvider()
 	claimCondition, err := transformResultToClaimCondition(
 		ctx,
 		&mc,
-		merkle,
 		provider,
-		claim.storage,
 	)
 	if err != nil {
 		return nil, err
@@ -117,17 +110,10 @@ func (claim *EditionDropClaimConditions) GetAll(ctx context.Context, tokenId int
 			return nil, err
 		}
 
-		merkle, err := claim.GetMerkleMetadata()
-		if err != nil {
-			return nil, err
-		}
-
 		claimCondition, err := transformResultToClaimCondition(
 			ctx,
 			&mc,
-			merkle,
 			provider,
-			claim.storage,
 		)
 		if err != nil {
 			return nil, err
@@ -140,22 +126,22 @@ func (claim *EditionDropClaimConditions) GetAll(ctx context.Context, tokenId int
 }
 
 func (claim *EditionDropClaimConditions) GetMerkleMetadata() (*map[string]string, error) {
-	uri, err := claim.abi.InternalContractURI(&bind.CallOpts{});
+	uri, err := claim.abi.InternalContractURI(&bind.CallOpts{})
 	if err != nil {
 		return nil, err
 	}
 
-	body, err := claim.storage.Get(uri);
+	body, err := claim.storage.Get(uri)
 	if err != nil {
 		return nil, err
 	}
 
 	var rawMetadata struct {
 		Merkle map[string]string `json:"merkle"`
-	};
+	}
 	if err := json.Unmarshal(body, &rawMetadata); err != nil {
 		return nil, err
 	}
 
-	return &rawMetadata.Merkle, nil;
+	return &rawMetadata.Merkle, nil
 }

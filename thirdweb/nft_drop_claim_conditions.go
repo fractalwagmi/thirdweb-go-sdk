@@ -60,18 +60,11 @@ func (claim *NFTDropClaimConditions) GetActive() (*ClaimConditionOutput, error) 
 		return nil, err
 	}
 
-  merkle, err := claim.getMerkleMetadata()
-	if err != nil {
-		return nil, err
-	}
-
 	provider := claim.helper.GetProvider()
 	claimCondition, err := transformResultToClaimCondition(
 		context.Background(),
 		&active,
-		merkle,
 		provider,
-		claim.storage,
 	)
 	if err != nil {
 		return nil, err
@@ -87,17 +80,11 @@ func (claim *NFTDropClaimConditions) Get(claimConditionId int) (*ClaimConditionO
 	}
 
 	provider := claim.helper.GetProvider()
-	merkle, err := claim.getMerkleMetadata()
-	if err != nil {
-		return nil, err
-	}
 
 	claimCondition, err := transformResultToClaimCondition(
 		context.Background(),
 		&condition,
-		merkle,
 		provider,
-		claim.storage,
 	)
 	if err != nil {
 		return nil, err
@@ -139,17 +126,10 @@ func (claim *NFTDropClaimConditions) GetAll() ([]*ClaimConditionOutput, error) {
 			return nil, err
 		}
 
-		merkle, err := claim.getMerkleMetadata()
-		if err != nil {
-			return nil, err
-		}
-	
 		claimCondition, err := transformResultToClaimCondition(
 			context.Background(),
 			&mc,
-			merkle,
 			provider,
-			claim.storage,
 		)
 		if err != nil {
 			return nil, err
@@ -162,24 +142,24 @@ func (claim *NFTDropClaimConditions) GetAll() ([]*ClaimConditionOutput, error) {
 }
 
 func (claim *NFTDropClaimConditions) getMerkleMetadata() (*map[string]string, error) {
-	uri, err := claim.abi.InternalContractURI(&bind.CallOpts{});
+	uri, err := claim.abi.InternalContractURI(&bind.CallOpts{})
 	if err != nil {
 		return nil, err
 	}
 
-	body, err := claim.storage.Get(uri);
+	body, err := claim.storage.Get(uri)
 	if err != nil {
 		return nil, err
 	}
 
 	var rawMetadata struct {
 		Merkle map[string]string `json:"merkle"`
-	};
+	}
 	if err := json.Unmarshal(body, &rawMetadata); err != nil {
 		return nil, err
 	}
 
-	return &rawMetadata.Merkle, nil;
+	return &rawMetadata.Merkle, nil
 }
 
 func (claim *NFTDropClaimConditions) GetClaimerProofs(
@@ -190,13 +170,13 @@ func (claim *NFTDropClaimConditions) GetClaimerProofs(
 	if err != nil {
 		return nil, err
 	}
-	
+
 	if !strings.HasPrefix(hex.EncodeToString(claimCondition.MerkleRootHash[:]), zeroAddress) {
 		merkleMetadata, err := claim.getMerkleMetadata()
 		if err != nil {
 			return nil, err
 		}
-		
+
 		return fetchSnapshotEntryForAddress(
 			ctx,
 			common.HexToAddress(claimerAddress),
