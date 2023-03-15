@@ -141,7 +141,7 @@ var editionSigmintCmd = &cobra.Command{
 			panic("Invalid signature")
 		}
 
-		tx, err := edition.Signature.Mint(context.Background(), payload)
+		tx, err := edition.Signature.MintAndWait(context.Background(), payload)
 		if err != nil {
 			panic(err)
 		}
@@ -196,7 +196,7 @@ var editionSigmintTokenIdCmd = &cobra.Command{
 			panic("Invalid signature")
 		}
 
-		tx, err := edition.Signature.Mint(context.Background(), payload)
+		tx, err := edition.Signature.MintAndWait(context.Background(), payload)
 		if err != nil {
 			panic(err)
 		}

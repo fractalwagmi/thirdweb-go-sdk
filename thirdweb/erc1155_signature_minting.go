@@ -52,7 +52,7 @@ func newERC1155SignatureMinting(provider *ethclient.Client, address common.Addre
 //	// Learn more about how to craft a payload in the Generate() function
 //	signedPayload, err := contract.Signature.Generate(payload)
 //	tx, err := contract.Signature.Mint(signedPayload)
-func (signature *ERC1155SignatureMinting) Mint(ctx context.Context, signedPayload *SignedPayload1155) (*types.Transaction, error) {
+func (signature *ERC1155SignatureMinting) MintAndWait(ctx context.Context, signedPayload *SignedPayload1155) (*types.Transaction, error) {
 	txOpts, err := signature.Helper.GetTxOptions(ctx)
 	if err != nil {
 		return nil, err
